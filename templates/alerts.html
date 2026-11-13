@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSentry | Alerts & Logs</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="/dashboard">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/discovery">Network Discovery</a>
+                <a href="/assessment">Security Assessment</a>
+                <a href="/alerts" class="active">Alerts & Logs</a>
+                <a href="/reports">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Alerts & Logs</h1>
+                    <p>Monitor recorded network security events.</p>
+                </div>
+
+                <div class="admin-label">
+                    Administrator
+                </div>
+            </header>
+
+            <section class="dashboard-welcome">
+                <h2>Security Event Management</h2>
+                <p>
+                    Review newly discovered devices and other
+                    recorded security findings.
+                </p>
+            </section>
+
+            <section>
+                <h2>Recorded Alerts</h2>
+
+                {% if alerts %}
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Alert Type</th>
+                                <th>IP Address</th>
+                                <th>Severity</th>
+                                <th>Description</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for alert in alerts %}
+                            <tr>
+                                <td>{{ alert[0] }}</td>
+                                <td>{{ alert[1] }}</td>
+                                <td>{{ alert[2] }}</td>
+
+                                <td>
+                                    <span class="severity-medium">
+                                        {{ alert[3] }}
+                                    </span>
+                                </td>
+
+                                <td>{{ alert[4] }}</td>
+                                <td>{{ alert[5] }}</td>
+                                <td>{{ alert[6] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+
+                <div class="dashboard-welcome">
+                    <h3>No Alerts Recorded</h3>
+                    <p>
+                        No security events have been recorded yet.
+                        Run network discovery to identify new
+                        unregistered devices.
+                    </p>
+                </div>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

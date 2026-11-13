@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NetSentry | Device Management</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="/dashboard">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/dashboard#discovery">Network Discovery</a>
+                <a href="/dashboard#assessment">Security Assessment</a>
+                <a href="/dashboard#alerts">Alerts & Logs</a>
+                <a href="/dashboard#reports">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Device Management</h1>
+                    <p>Register and manage network devices.</p>
+                </div>
+
+                <div class="admin-label">
+                    {{ session["admin_username"] }}
+                </div>
+            </header>
+
+            <section>
+                <h2>Register New Device</h2>
+
+                {% if message %}
+                    <p class="device-message">{{ message }}</p>
+                {% endif %}
+
+                <form action="/devices" method="POST"
+                      class="device-form">
+
+                    <div class="form-group">
+                        <label for="device_name">Device Name</label>
+                        <input type="text"
+                               id="device_name"
+                               name="device_name"
+                               placeholder="e.g. Office Router"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ip_address">IP Address</label>
+                        <input type="text"
+                               id="ip_address"
+                               name="ip_address"
+                               placeholder="e.g. 192.168.1.1"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="device_type">Device Type</label>
+                        <select id="device_type"
+                                name="device_type" required>
+                            <option value="">Select device type</option>
+                            <option value="Router">Router</option>
+                            <option value="Computer">Computer</option>
+                            <option value="Server">Server</option>
+                            <option value="Switch">Switch</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        Add Device
+                    </button>
+
+                </form>
+            </section>
+
+            <section>
+                <h2>Registered Devices</h2>
+
+                <div class="device-table-container">
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Device Name</th>
+                                <th>IP Address</th>
+                                <th>Device Type</th>
+                                <th>Added At</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for device in devices %}
+                            <tr>
+                                <td>{{ device["id"] }}</td>
+                                <td>{{ device["device_name"] }}</td>
+                                <td>{{ device["ip_address"] }}</td>
+                                <td>{{ device["device_type"] }}</td>
+                                <td>{{ device["added_at"] }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5">
+                                    No devices registered yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

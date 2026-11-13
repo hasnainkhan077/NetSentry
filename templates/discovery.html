@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NetSentry | Network Discovery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="/dashboard">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/discovery" class="active">Network Discovery</a>
+                <a href="/dashboard#assessment">Security Assessment</a>
+                <a href="/dashboard#alerts">Alerts & Logs</a>
+                <a href="/dashboard#reports">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Network Discovery</h1>
+                    <p>Discover and identify devices on your authorized local network.</p>
+                </div>
+
+                <div class="admin-label">
+                    {{ session["admin_username"] }}
+                </div>
+            </header>
+
+            <!-- Discovery Section -->
+            <section>
+                <h2>Network Scanner</h2>
+
+                <p>
+                    Scan your private network to identify reachable
+                    devices using Nmap host discovery.
+                </p>
+
+                {% if message %}
+                    <p class="device-message">{{ message }}</p>
+                {% endif %}
+
+                <form action="/discovery" method="POST"
+                      class="device-form">
+
+                    <div class="form-group">
+                        <label for="network_range">
+                            Private Network Range
+                        </label>
+
+                        <input
+                            type="text"
+                            id="network_range"
+                            name="network_range"
+                            placeholder="e.g. 192.168.203.0/24"
+                            value="{{ network_range }}"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        Start Discovery
+                    </button>
+
+                </form>
+            </section>
+
+
+            <!-- Newly Detected Devices -->
+            <section>
+                <h2>Newly Detected Devices</h2>
+
+                {% if new_devices %}
+                    <p>
+                        {{ new_devices|length }} new IP address(es)
+                        detected in this scan.
+                    </p>
+
+                    <div class="device-table-container">
+                        <table class="device-table">
+
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>IP Address</th>
+                                    <th>MAC Address</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for device in new_devices %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ device["ip_address"] }}</td>
+                                    <td>{{ device["mac_address"] }}</td>
+                                    <td>
+                                        <span class="device-status unregistered">
+                                            New Detection
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                {% elif scan_completed %}
+                    <p>
+                        No new IP addresses detected.
+                        Your network matches the saved discovery history.
+                    </p>
+
+                {% else %}
+                    <p>
+                        Run a network discovery to identify
+                        newly detected IP addresses.
+                    </p>
+                {% endif %}
+            </section>
+
+
+            <!-- Discovery History -->
+            <section>
+                <h2>Discovery History</h2>
+
+                <div class="device-table-container">
+                    <table class="device-table">
+
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>IP Address</th>
+                                <th>MAC Address</th>
+                                <th>Inventory Status</th>
+                                <th>Availability</th>
+                                <th>First Seen</th>
+                                <th>Last Seen</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for device in discovered_devices %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+
+                                <td>{{ device["ip_address"] }}</td>
+
+                                <td>{{ device["mac_address"] }}</td>
+
+                                <td>
+                                    {% if device["inventory_status"] == "Registered" %}
+                                        <span class="device-status registered">
+                                            Registered
+                                        </span>
+                                    {% else %}
+                                        <span class="device-status unregistered">
+                                            Not in Inventory
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if device["availability_status"] == "Online" %}
+                                        <span class="device-status registered">
+                                            Online
+                                        </span>
+                                    {% elif device["availability_status"] == "Offline" %}
+                                        <span class="device-status unregistered">
+                                            Offline
+                                        </span>
+                                    {% else %}
+                                        Not checked
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ device["first_seen"] }}</td>
+                                <td>{{ device["last_seen"] }}</td>
+
+                                <td>
+                                    {% if device["inventory_status"] == "Not in Inventory" %}
+                                        <form
+                                            action="{{ url_for('dismiss_device', device_id=device['id']) }}"
+                                            method="POST">
+
+                                            <button type="submit" class="logout-button">
+                                                Dismiss
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+                            <tr>
+                                <td colspan="8">
+                                    No discovery history available.
+                                    Start a network discovery to find devices.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- Information -->
+            <section>
+                <h2>About Network Discovery</h2>
+
+                <p>
+                    NetSentry uses Nmap to identify reachable devices
+                    on an authorized private network.
+                </p>
+
+                <p>
+                    Devices marked "Not in Inventory" are not
+                    automatically considered malicious. They may
+                    simply be unregistered devices.
+                </p>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

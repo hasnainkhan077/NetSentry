@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSentry | Security Reports</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="/dashboard">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/discovery">Network Discovery</a>
+                <a href="/assessment">Security Assessment</a>
+                <a href="/alerts">Alerts & Logs</a>
+                <a href="/reports" class="active">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Security Reports</h1>
+                    <p>Generate and manage network security assessment reports.</p>
+                </div>
+
+                <div class="admin-label">
+                    Administrator
+                </div>
+            </header>
+
+            <!-- Welcome Section -->
+            <section class="dashboard-welcome">
+                <h2>Network Security Reporting Center</h2>
+
+                <p>
+                    Generate professional reports to review network
+                    inventory, discovery results, security findings,
+                    and recommended defensive actions.
+                </p>
+            </section>
+
+            <!-- Report Information -->
+            <section>
+                <h2>PDF Assessment Report</h2>
+
+                <div class="dashboard-welcome">
+                    <h3>Report Contents</h3>
+
+                    <p>
+                        The NetSentry PDF report will provide a
+                        structured summary of the network assessment.
+                    </p>
+
+                    <ul>
+                        <li>Assessment date and time</li>
+                        <li>Total registered network devices</li>
+                        <li>Total discovered network devices</li>
+                        <li>Security findings and severity levels</li>
+                        <li>Descriptions of identified findings</li>
+                        <li>Recommended defensive actions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Report Generation -->
+<section>
+    <h2>Generate Report</h2>
+
+    <div class="dashboard-welcome">
+        <h3>Network Security Assessment Report</h3>
+
+        <p>
+            Create a downloadable PDF document containing
+            the latest available network assessment results.
+        </p>
+
+        <form action="/reports/download" method="POST">
+            <button type="submit">
+                Download PDF Report
+            </button>
+        </form>
+
+    </div>
+</section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

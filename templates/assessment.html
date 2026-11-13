@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NetSentry | Security Assessment</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="/dashboard">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/discovery">Network Discovery</a>
+                <a href="/assessment" class="active">Security Assessment</a>
+                <a href="/dashboard#alerts">Alerts & Logs</a>
+                <a href="/dashboard#reports">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Security Assessment</h1>
+                    <p>
+                        Review network inventory and identify
+                        potential security concerns.
+                    </p>
+                </div>
+
+                <div class="admin-label">
+                    {{ session["admin_username"] }}
+                </div>
+            </header>
+
+            <!-- Assessment Introduction -->
+            <section>
+                <h2>Network Security Overview</h2>
+
+                <p>
+                    Run an assessment to review registered devices,
+                    network discovery records, and identify
+                    potential security concerns.
+                </p>
+
+                <form action="/assessment" method="POST">
+                    <button type="submit" class="login-button">
+                        Run Security Assessment
+                    </button>
+                </form>
+            </section>
+
+
+            <!-- Assessment Summary -->
+            <section>
+                <h2>Assessment Summary</h2>
+
+                {% if assessment_run %}
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+                            <h3>Registered Devices</h3>
+                            <p>{{ registered_count }}</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <h3>Discovered Devices</h3>
+                            <p>{{ discovered_count }}</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <h3>Security Findings</h3>
+                            <p>{{ finding_count }}</p>
+                        </div>
+
+                    </div>
+
+                    <p>
+                        Assessment completed successfully.
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        No assessment has been performed yet.
+                        Run an assessment to generate security findings.
+                    </p>
+
+                {% endif %}
+            </section>
+
+
+            <!-- Assessment History -->
+            <section>
+                <h2>Assessment History</h2>
+
+                {% if assessment_history %}
+
+                    <div class="device-table-container">
+                        <table class="device-table">
+
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Registered Devices</th>
+                                    <th>Discovered Devices</th>
+                                    <th>Security Findings</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for record in assessment_history %}
+                                <tr>
+                                    <td>{{ record[0] }}</td>
+                                    <td>{{ record[1] }}</td>
+                                    <td>{{ record[2] }}</td>
+                                    <td>{{ record[3] }}</td>
+                                    <td>{{ record[4] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                {% else %}
+
+                    <p>
+                        No assessment history is available yet.
+                        Run your first security assessment to create a record.
+                    </p>
+
+                {% endif %}
+            </section>
+
+
+            <!-- Security Findings -->
+            <section>
+                <h2>Security Findings</h2>
+
+                {% if assessment_run %}
+
+                    {% if findings %}
+
+                        <div class="device-table-container">
+                            <table class="device-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Finding</th>
+                                        <th>IP Address</th>
+                                        <th>Severity</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for finding in findings %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+
+                                        <td>{{ finding["title"] }}</td>
+
+                                        <td>{{ finding["ip_address"] }}</td>
+
+                                        <td>
+                                            <span class="device-status unregistered">
+                                                {{ finding["severity"] }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            {{ finding["description"] }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    {% else %}
+
+                        <p>
+                            No findings were identified from the
+                            available inventory and discovery records.
+                        </p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <p>
+                        Assessment findings will appear here
+                        after the first assessment.
+                    </p>
+
+                {% endif %}
+            </section>
+
+
+            <!-- Recommendations -->
+            <section>
+                <h2>Security Recommendations</h2>
+
+                {% if assessment_run and findings %}
+
+                    {% for finding in findings %}
+                        <div>
+                            <h3>{{ loop.index }}. {{ finding["title"] }}</h3>
+
+                            <p>
+                                <strong>Recommended Action:</strong>
+                                {{ finding["recommendation"] }}
+                            </p>
+                        </div>
+                    {% endfor %}
+
+                {% elif assessment_run %}
+
+                    <p>
+                        No additional recommendations are required
+                        based on the available assessment results.
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Defensive recommendations will be provided
+                        based on the assessment results.
+                    </p>
+
+                {% endif %}
+            </section>
+
+
+            <!-- Information -->
+            <section>
+                <h2>About Security Assessment</h2>
+
+                <p>
+                    NetSentry reviews available network inventory
+                    and discovery information to identify
+                    potential security concerns.
+                </p>
+
+                <p>
+                    An unregistered device is not automatically
+                    considered malicious. Findings require
+                    administrator review.
+                </p>
+
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

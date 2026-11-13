@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSentry | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <h2 class="dashboard-logo">NetSentry</h2>
+            <p class="sidebar-subtitle">NETWORK SECURITY</p>
+
+            <nav>
+                <a href="#overview">Overview</a>
+                <a href="/devices">Device Management</a>
+                <a href="/discovery">Network Discovery</a>
+                <a href="/assessment">Security Assessment</a>
+                <a href="/alerts">Alerts & Logs</a>
+                <a href="/reports">Reports</a>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </aside>
+
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Security Dashboard</h1>
+                    <p>Welcome back, Administrator!</p>
+                </div>
+
+                <div class="admin-label">
+                    {{ admin_username }}
+                </div>
+            </header>
+
+            <section id="overview">
+                <h2>System Overview</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Network Devices</h3>
+                        <p>{{ device_count }}</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>Security Alerts</h3>
+                        <p>{{ alert_count }}</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>Assessments</h3>
+                        <p>{{ assessment_count }}</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>System Status</h3>
+                        <p class="online-status">Online</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-welcome">
+                <h2>Welcome to NetSentry</h2>
+                <p>
+                    Your centralized network security assessment
+                    and monitoring platform.
+                </p>
+            </section>
+
+            <section id="devices">
+                <h2>Device Management</h2>
+                <p>Network device management will be available here.</p>
+            </section>
+
+            <section id="assessment">
+                <h2>Security Assessment</h2>
+                <p>Security assessment tools will be available here.</p>
+            </section>
+
+            <section id="alerts">
+                <h2>Alerts & Logs</h2>
+                <p>Security events and logs will appear here.</p>
+            </section>
+
+
+        </main>
+
+    </div>
+
+</body>
+</html>
